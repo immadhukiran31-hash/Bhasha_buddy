@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="te" data-lang="te" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#0F766E">
+  <meta name="description" content="BhashaBuddy: Technical English vocabulary for engineering students using regional medium of instruction (Telugu, Hindi, Tamil) with speech recognition pronunciation grading.">
+  <title>BhashaBuddy - Technical English VoiceBridge</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/icon-192.svg">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/layout.css">
+</head>
+<body>
+  <!-- Confetti Canvas for Celebrations -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Toast Notification System -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="container nav-container">
+      <div class="flex items-center gap-sm">
+        <a href="#home" class="brand-link" aria-label="BhashaBuddy Home">
+          <div class="brand-logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="22"></line>
+            </svg>
+          </div>
+          <span data-i18n="app_title">BhashaBuddy</span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="desktop-nav-links" aria-label="Desktop Navigation">
+          <a href="#home" class="desktop-nav-link active" data-i18n="nav_home">Home</a>
+          <a href="#learn" class="desktop-nav-link" data-i18n="nav_learn">Learn</a>
+          <a href="#practice" class="desktop-nav-link" data-i18n="nav_practice">Practice</a>
+          <a href="#quiz" class="desktop-nav-link" data-i18n="nav_quiz">Quiz</a>
+          <a href="#progress" class="desktop-nav-link" data-i18n="nav_progress">Progress</a>
+          <a href="#dictionary" class="desktop-nav-link" data-i18n="nav_dictionary">Dictionary</a>
+          <a href="#chat" class="desktop-nav-link" data-i18n="nav_chat">AI Buddy</a>
+          <a href="#peer" class="desktop-nav-link" data-i18n="nav_peer">Peer Voice</a>
+        </nav>
+      </div>
+
+      <!-- Right Navbar Controls -->
+      <div class="nav-controls">
+        <!-- Offline Status Pill -->
+        <span class="offline-pill" data-i18n="offline_badge">Offline Ready</span>
+
+        <!-- Demo Mode Badge -->
+        <span id="navbar-demo-pill" class="demo-badge-indicator cursor-pointer" data-i18n="demo_badge" title="Click to toggle Demo Mode (Ctrl+Shift+D)">DEMO MODE</span>
+
+        <!-- Streak Badge -->
+        <div class="streak-badge" title="Daily Active Learning Streak">
+          <span>🔥</span>
+          <span class="streak-badge-count">0d</span>
+        </div>
+
+        <!-- Language Switcher -->
+        <select id="nav-lang-select" class="lang-selector-select" aria-label="Select Regional Language">
+          <option value="te">తెలుగు</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ta">தமிழ்</option>
+          <option value="en">English</option>
+        </select>
+
+        <!-- Dark Mode Toggle -->
+        <button id="theme-toggle-btn" class="btn-icon" aria-label="Toggle dark mode" title="Toggle theme">
+          🌙
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER (Hash Router Views) -->
+  <main class="container" style="padding-top: var(--space-md);">
+
+    <!-- ==========================================
+         SECTION 0: HOME / DASHBOARD (#home)
+         ========================================== -->
+    <section id="home" class="view-section active">
+      <div style="margin-bottom: var(--space-lg);">
+        <h1 id="home-greeting" class="regional-large" style="margin-bottom: 4px;">నమస్కారం, రవి!</h1>
+        <p data-i18n="app_tagline">Technical English in Your Mother Tongue</p>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- Left Column: Metrics & CTAs -->
+        <div class="flex flex-col gap-lg">
+          <!-- Daily Goal Progress Card -->
+          <div class="card card-accent-border">
+            <div class="flex items-center justify-between" style="margin-bottom: var(--space-md);">
+              <div>
+                <h3 data-i18n="daily_goal_label">Daily Goal</h3>
+                <span id="home-ring-pct-label" class="text-sm font-semibold text-primary">0% Daily Goal</span>
+              </div>
+              <!-- Animated SVG Progress Ring -->
+              <div class="progress-ring-container">
+                <svg width="90" height="90">
+                  <circle stroke="var(--color-border)" stroke-width="8" fill="transparent" r="40" cx="45" cy="45"/>
+                  <circle id="home-ring-circle" class="progress-ring-circle" stroke="var(--color-primary)" stroke-width="8" stroke-linecap="round" fill="transparent" r="40" cx="45" cy="45" style="stroke-dasharray: 251.327; stroke-dashoffset: 251.327;"/>
+                </svg>
+                <div class="progress-ring-content">
+                  <span id="home-ring-count" class="font-bold text-sm">0/5</span>
+                  <span class="text-xs text-muted">words</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Sub-row -->
+            <div class="grid stats-grid" style="border-top: 1px solid var(--color-border); padding-top: var(--space-md);">
+              <div>
+                <span class="text-xs text-muted" data-i18n="mastered_label">Mastered Words</span>
+                <div id="home-mastered-count" class="font-bold" style="font-size: 1.25rem; color: var(--color-primary);">0 / 50</div>
+              </div>
+              <div>
+                <span class="text-xs text-muted" data-i18n="streak_label">Current Streak</span>
+                <div class="font-bold text-accent streak-badge-count" style="font-size: 1.25rem;">0d</div>
+              </div>
+              <div>
+                <span class="text-xs text-muted">Active Language</span>
+                <div class="font-bold text-sm" style="margin-top: 4px;">తెలుగు (Telugu)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Big Action Buttons -->
+          <div class="flex flex-col gap-sm">
+            <a href="#learn" class="btn btn-primary btn-lg justify-between">
+              <span class="flex items-center gap-sm">
+                <span>📚</span>
+                <span data-i18n="cta_continue_learning">Continue Learning</span>
+              </span>
+              <span>→</span>
+            </a>
+            <a href="#practice?id=11" class="btn btn-accent btn-lg justify-between">
+              <span class="flex items-center gap-sm">
+                <span>🎙️</span>
+                <span data-i18n="cta_practice_pron">Practice Pronunciation</span>
+              </span>
+              <span>→</span>
+            </a>
+            <a href="#quiz" class="btn btn-secondary btn-lg justify-between">
+              <span class="flex items-center gap-sm">
+                <span>📝</span>
+                <span data-i18n="cta_take_quiz">Take Daily Quiz</span>
+              </span>
+              <span>→</span>
+            </a>
+          </div>
+
+          <!-- 2-Minute Micro Lesson Card -->
+          <div class="card" style="background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-muted) 100%);">
+            <div class="flex items-center gap-sm" style="margin-bottom: 8px;">
+              <span class="badge badge-accent">⚡ 2-Min</span>
+              <h4 data-i18n="micro_lesson_title">2-Minute Micro Lesson</h4>
+            </div>
+            <p class="text-sm text-muted" style="margin-bottom: var(--space-md);" data-i18n="micro_lesson_desc">
+              Quickly review 5 core concepts from your current active unit.
+            </p>
+            <button class="btn btn-outline btn-sm" onclick="app.startMicroLesson()" data-i18n="btn_start_lesson">
+              Start 2-Min Lesson
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Word of the Day & Quick Tips -->
+        <div class="flex flex-col gap-lg">
+          <!-- Word of the Day Card -->
+          <div class="card card-primary-border">
+            <div class="flex items-center justify-between" style="margin-bottom: var(--space-sm);">
+              <span class="badge badge-primary" data-i18n="word_of_day_badge">Word of the Day</span>
+              <span class="text-xs text-muted">Daily Technical Focus</span>
+            </div>
+            
+            <h2 id="wotd-english" style="font-size: 2rem; color: var(--color-primary); margin-top: 8px;">
+              Algorithm
+            </h2>
+            <div class="flex items-center gap-sm" style="margin-bottom: 12px;">
+              <span id="wotd-phonetic" class="font-mono text-muted text-sm">/ˈæl.ɡə.rɪ.ðəm/</span>
+              <span id="wotd-transliteration" class="badge badge-accent text-xs">అల్గారిథం</span>
+            </div>
+
+            <p id="wotd-meaning" class="regional-text" style="color: var(--color-ink); margin-bottom: var(--space-md);">
+              సమస్యను పరిష్కరించడానికి రాసే దశలవారీ నియమాల సమాహారం.
+            </p>
+
+            <div class="flex items-center gap-sm">
+              <button id="wotd-listen-btn" class="btn btn-listen btn-sm">
+                <span>🔊</span>
+                <span data-i18n="btn_listen">Listen</span>
+              </button>
+              <button id="wotd-practice-btn" class="btn btn-accent btn-sm">
+                <span>🎙️</span>
+                <span data-i18n="btn_speak">Practice</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Student Tips Box -->
+          <div class="card" style="border: 1px dashed var(--color-primary);">
+            <div class="flex items-center gap-xs" style="margin-bottom: 8px;">
+              <span>💡</span>
+              <h4 style="font-size: 1rem;">Why Mother Tongue Learning Works</h4>
+            </div>
+            <p class="text-sm text-muted" style="line-height: 1.6;">
+              Understanding engineering logic first in Telugu, Hindi or Tamil removes mental translation fatigue, helping you speak Technical English with genuine confidence in interviews.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 1: LEARN / FLASHCARDS (#learn)
+         ========================================== -->
+    <section id="learn" class="view-section">
+      <!-- VIEW A: Unit Selection Grid -->
+      <div id="learn-units-view">
+        <div style="margin-bottom: var(--space-lg);">
+          <h2 data-i18n="nav_learn" style="margin-bottom: 4px;">Engineering Vocabulary Units</h2>
+          <p class="text-muted">Master 50 foundational terms grouped into 5 progressive units.</p>
+        </div>
+        <div id="units-container">
+          <!-- Rendered dynamically by flashcards.renderUnitsGrid() -->
+        </div>
+      </div>
+
+      <!-- VIEW B: Flashcard Deck View (When a unit is clicked) -->
+      <div id="learn-deck-view" style="display: none;">
+        <div class="flex items-center justify-between" style="margin-bottom: var(--space-md);">
+          <button class="btn btn-secondary btn-sm" onclick="flashcards.backToUnits()">
+            ← Back to Units
+          </button>
+          <div class="flex items-center gap-sm">
+            <span class="text-sm font-semibold text-muted" id="deck-progress-text">1 / 10</span>
+          </div>
+        </div>
+
+        <!-- Unit progress bar -->
+        <div class="score-bar-bg" style="height: 6px; margin-bottom: var(--space-lg);">
+          <div id="deck-progress-bar" class="score-bar-fill score-excellent" style="width: 10%;"></div>
+        </div>
+
+        <!-- Active Flashcard 3D Flip Container -->
+        <div id="active-card-container">
+          <!-- Rendered dynamically by flashcards.renderCurrentCard() -->
+        </div>
+
+        <!-- Flashcard Action Buttons -->
+        <div class="flex items-center justify-center gap-sm" style="margin-top: var(--space-lg); flex-wrap: wrap;">
+          <button class="btn btn-secondary" onclick="flashcards.prevCard()" data-i18n="btn_prev">Previous</button>
+          <button class="btn btn-accent" onclick="flashcards.markForReview()" data-i18n="btn_review_later">Review Later ⚑</button>
+          <button class="btn btn-primary" onclick="flashcards.markAsKnown()" data-i18n="btn_know_this">I Know This ✓</button>
+          <button class="btn btn-secondary" onclick="flashcards.nextCard()" data-i18n="btn_next">Next</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 2: PRACTICE / PRONUNCIATION (#practice)
+         ========================================== -->
+    <section id="practice" class="view-section">
+      <div style="margin-bottom: var(--space-lg); text-align: center;">
+        <h2 data-i18n="practice_title">Voice Pronunciation Evaluator</h2>
+        <p class="text-muted" data-i18n="practice_subtitle">Listen closely to native technical cadence, then speak into your mic.</p>
+      </div>
+
+      <div style="max-width: 640px; margin: 0 auto;">
+        <!-- Word Selector Dropdown -->
+        <div class="flex items-center gap-sm" style="margin-bottom: var(--space-md);">
+          <label for="practice-word-select" class="text-sm font-semibold text-muted" style="white-space: nowrap;">
+            Target Term:
+          </label>
+          <select id="practice-word-select" class="lang-selector-select" style="flex: 1; padding: 8px 14px;">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <!-- Main Card: Word & Meaning Display -->
+        <div class="card" style="text-align: center; margin-bottom: var(--space-lg); padding: var(--space-xl);">
+          <div class="flex items-center justify-between" style="margin-bottom: 8px;">
+            <span id="practice-transliteration" class="badge badge-accent">అల్గారిథం</span>
+            <div class="speed-toggle-group">
+              <button class="speed-chip active" data-rate="1.0" onclick="pronunciation.setAudioRate(1.0)">1.0x</button>
+              <button class="speed-chip" data-rate="0.8" onclick="pronunciation.setAudioRate(0.8)">0.8x</button>
+              <button class="speed-chip" data-rate="0.6" onclick="pronunciation.setAudioRate(0.6)">0.6x</button>
+            </div>
+          </div>
+
+          <h1 id="practice-target-word" style="font-size: 2.75rem; color: var(--color-primary); font-weight: 800; margin-bottom: 6px;">
+            Algorithm
+          </h1>
+          <div id="practice-phonetic" class="font-mono text-muted" style="font-size: 1.25rem; margin-bottom: var(--space-md);">
+            /ˈæl.ɡə.rɪ.ðəm/
+          </div>
+
+          <p id="practice-regional-meaning" class="regional-text" style="color: var(--color-ink); margin-bottom: var(--space-lg); max-width: 480px; margin-left: auto; margin-right: auto;">
+            సమస్యను పరిష్కరించడానికి రాసే దశలవారీ నియమాల సమాహారం.
+          </p>
+
+          <!-- Listen Button -->
+          <div style="margin-bottom: var(--space-xl);">
+            <button id="practice-listen-btn" class="btn btn-listen btn-lg" onclick="pronunciation.playTargetAudio()">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+              </svg>
+              <span data-i18n="btn_listen">Listen Audio</span>
+            </button>
+          </div>
+
+          <!-- Speak Mic Station -->
+          <div style="margin-bottom: var(--space-md);">
+            <button id="practice-mic-btn" class="btn-mic-main" onclick="pronunciation.toggleSpeechRecognition()" aria-label="Microphone Voice Input">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="22"></line>
+              </svg>
+            </button>
+            <div id="practice-mic-status" class="text-sm font-semibold" style="margin-top: 12px; color: var(--color-primary);" data-i18n="mic_idle">
+              Press the microphone and speak clearly
+            </div>
+            <div id="practice-live-transcript" class="font-mono text-sm" style="min-height: 24px; color: var(--color-accent-hover); margin-top: 4px;"></div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-muted" style="border-top: 1px solid var(--color-border); padding-top: 12px;">
+            <span id="practice-attempts-text">Attempts: 0 of 3</span>
+            <button id="practice-hear-again-btn" class="btn btn-sm btn-outline" style="display: none;" onclick="pronunciation.playTargetAudio(0.8)">
+              Hear it at 0.8x 🔊
+            </button>
+          </div>
+        </div>
+
+        <!-- Pronunciation Match Evaluation Box -->
+        <div id="practice-result-box" class="score-meter-box" style="display: none; margin-bottom: var(--space-lg);">
+          <div class="flex items-center justify-between" style="margin-bottom: 6px;">
+            <span class="font-bold text-sm" data-i18n="result_match">Pronunciation Match</span>
+            <span id="result-score-val" class="font-mono font-bold" style="font-size: 1.4rem; color: var(--color-primary);">95%</span>
+          </div>
+
+          <!-- Color Progress Bar -->
+          <div class="score-bar-bg">
+            <div id="result-score-bar" class="score-bar-fill score-excellent" style="width: 95%;"></div>
+          </div>
+
+          <div style="margin: 12px 0;">
+            <span class="text-xs text-muted" data-i18n="what_heard">What I heard:</span>
+            <span id="result-heard-text" class="font-bold text-sm font-mono" style="margin-left: 6px; color: var(--color-ink);">"algorithm"</span>
+          </div>
+
+          <div id="result-feedback-text" class="regional-text font-bold" style="margin-bottom: 12px; font-size: 1.05rem; color: var(--color-success);">
+            Excellent! Crystal clear engineering pronunciation! 🎉
+          </div>
+
+          <div class="flex items-center justify-center gap-sm">
+            <button class="btn btn-primary btn-sm" onclick="pronunciation.startRecording()" data-i18n="btn_try_again">
+              Try Again 🎙️
+            </button>
+          </div>
+        </div>
+
+        <!-- Demo Safety Net Button (Visible in Demo mode or Ctrl+Shift+D) -->
+        <div style="text-align: center; margin-bottom: var(--space-lg);">
+          <button id="practice-demo-simulate-btn" class="btn btn-secondary btn-sm" style="display: none; border-color: #DC2626; color: #DC2626;" onclick="pronunciation.simulateDemoMatch()" data-i18n="btn_simulate_demo">
+            ⚡ Simulate 95% Match (Demo Safety Net)
+          </button>
+        </div>
+
+        <!-- Graceful Fallback Mode: Text Input (when mic blocked or unsupported) -->
+        <div id="practice-fallback-box" class="card" style="display: none; border-left: 5px solid var(--color-warning);">
+          <h4 data-i18n="fallback_title" style="margin-bottom: 4px;">Microphone Not Available or Denied</h4>
+          <p id="practice-fallback-reason" class="text-sm text-muted" style="margin-bottom: 12px;" data-i18n="fallback_desc">
+            No problem! You can type what you heard or phonetic spelling below to test your accuracy:
+          </p>
+          <div class="flex items-center gap-sm">
+            <input type="text" id="practice-typed-input" class="quiz-option-btn" style="flex: 1;" placeholder="Type the word here..." data-i18n-placeholder="fallback_placeholder" onkeydown="if(event.key==='Enter') pronunciation.evaluateTypedText()">
+            <button class="btn btn-primary" onclick="pronunciation.evaluateTypedText()" data-i18n="btn_check_text">
+              Evaluate
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 3: DAILY QUIZ (#quiz)
+         ========================================== -->
+    <section id="quiz" class="view-section">
+      <div style="max-width: 620px; margin: 0 auto;">
+        <!-- Header -->
+        <div style="margin-bottom: var(--space-md); text-align: center;">
+          <h2 data-i18n="quiz_title">Daily Engineering Quiz</h2>
+          <span id="quiz-step-indicator" class="text-sm font-semibold text-muted">Question 1 of 5</span>
+        </div>
+
+        <!-- Quiz Progress Bar -->
+        <div class="score-bar-bg" style="height: 6px; margin-bottom: var(--space-lg);">
+          <div id="quiz-progress-bar" class="score-bar-fill score-excellent" style="width: 20%;"></div>
+        </div>
+
+        <!-- ACTIVE QUESTION VIEW -->
+        <div id="quiz-active-view">
+          <!-- Audio Prompt (if listen_choose type) -->
+          <div id="quiz-audio-prompt-container" style="display: none;"></div>
+
+          <!-- Question Prompt Card -->
+          <div class="card" style="margin-bottom: var(--space-lg); padding: var(--space-lg);">
+            <div id="quiz-question-prompt">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- 4 Options -->
+          <div id="quiz-options-container" class="flex flex-col gap-sm" style="margin-bottom: var(--space-lg);">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Feedback & Explanation Box -->
+          <div id="quiz-feedback-box" class="card" style="display: none; margin-bottom: var(--space-lg); border-left: 5px solid var(--color-primary);">
+            <div id="quiz-feedback-status" class="font-bold text-sm" style="margin-bottom: 6px;"></div>
+            <div class="text-xs text-muted font-semibold" style="text-transform: uppercase; margin-bottom: 2px;" data-i18n="quiz_explanation_label">Explanation:</div>
+            <div id="quiz-explanation-text" class="regional-text text-sm"></div>
+          </div>
+
+          <!-- Bottom Action Buttons -->
+          <div class="flex items-center justify-end gap-sm">
+            <button id="quiz-submit-btn" class="btn btn-primary" onclick="quiz.checkAnswer()" disabled data-i18n="btn_submit_answer">
+              Check Answer
+            </button>
+            <button id="quiz-next-btn" class="btn btn-accent" style="display: none;" onclick="quiz.nextQuestion()" data-i18n="btn_next_question">
+              Next Question →
+            </button>
+          </div>
+        </div>
+
+        <!-- QUIZ RESULTS VIEW (Shown on completion) -->
+        <div id="quiz-results-view" class="card text-center" style="display: none; padding: var(--space-xl);">
+          <div style="font-size: 3rem; margin-bottom: var(--space-sm);">🏆</div>
+          <h2 data-i18n="quiz_complete_title" style="margin-bottom: 8px;">Quiz Completed!</h2>
+          <div id="quiz-result-score" class="font-bold text-primary font-mono" style="font-size: 2.25rem; margin-bottom: 6px;">4 / 5</div>
+          <p id="quiz-result-msg" class="text-muted" style="margin-bottom: var(--space-md);">You scored 4 out of 5 (80%)</p>
+          <div id="quiz-streak-msg" class="font-semibold text-accent" style="margin-bottom: var(--space-lg);">
+            +1 Day added to your learning streak! 🔥
+          </div>
+
+          <div class="flex items-center justify-center gap-sm" style="flex-wrap: wrap;">
+            <button id="quiz-retry-btn" class="btn btn-secondary" onclick="quiz.retryWrongAnswers()" data-i18n="btn_retry_wrong">
+              Review & Retry Mistakes
+            </button>
+            <button class="btn btn-primary" onclick="quiz.startNewQuiz()" data-i18n="btn_quiz_again">
+              Take Another Practice Quiz
+            </button>
+          </div>
+        </div>
+
+        <!-- Placeholder for initial start if needed -->
+        <div id="quiz-start-view" style="display: none;"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 4: PROGRESS TRACKER (#progress)
+         ========================================== -->
+    <section id="progress" class="view-section">
+      <div style="margin-bottom: var(--space-lg);">
+        <h2 data-i18n="progress_title">Learning Journey & Stats</h2>
+        <p class="text-muted">Track your daily streak, cumulative vocabulary mastery, and speech metrics.</p>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- Left: Metrics, Streak Strip & Units -->
+        <div class="flex flex-col gap-lg">
+          <!-- Daily Goal Box with Editable Goal -->
+          <div class="card">
+            <div class="flex items-center justify-between" style="margin-bottom: var(--space-md);">
+              <div>
+                <h3 data-i18n="daily_goal_label">Daily Goal</h3>
+                <span id="progress-page-ring-label" class="text-sm font-semibold text-primary">0% Completed</span>
+              </div>
+              <div class="progress-ring-container">
+                <svg width="80" height="80">
+                  <circle stroke="var(--color-border)" stroke-width="7" fill="transparent" r="35" cx="40" cy="40"/>
+                  <circle id="progress-page-ring-circle" class="progress-ring-circle" stroke="var(--color-primary)" stroke-width="7" stroke-linecap="round" fill="transparent" r="35" cx="40" cy="40" style="stroke-dasharray: 219.9; stroke-dashoffset: 219.9;"/>
+                </svg>
+                <div class="progress-ring-content">
+                  <span id="progress-page-ring-count" class="font-bold text-xs">0/5</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Goal selector chips -->
+            <div style="border-top: 1px solid var(--color-border); padding-top: var(--space-sm);">
+              <span class="text-xs font-semibold text-muted" data-i18n="setting_goal_title">Adjust Daily Goal:</span>
+              <div id="goal-selection-chips" class="flex gap-xs" style="margin-top: 6px; flex-wrap: wrap;"></div>
+            </div>
+          </div>
+
+          <!-- 7-Day Activity Calendar Strip -->
+          <div class="card">
+            <div class="flex items-center justify-between" style="margin-bottom: var(--space-sm);">
+              <h4 data-i18n="streak_calendar_title">7-Day Activity Strip</h4>
+              <span class="badge badge-accent streak-badge-count">0d</span>
+            </div>
+            <div id="streak-calendar-strip">
+              <!-- Rendered by progressTracker.renderStreakCalendarStrip() -->
+            </div>
+          </div>
+
+          <!-- Unit Vocabulary Mastery Progress -->
+          <div class="card">
+            <h4 style="margin-bottom: var(--space-md);">Unit Mastery Breakdown</h4>
+            <div id="unit-progress-list">
+              <!-- Rendered by progressTracker.renderUnitProgressBars() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Weekly Chart, Pron Score & Badges -->
+        <div class="flex flex-col gap-lg">
+          <!-- Average Pronunciation Score -->
+          <div class="card">
+            <div class="flex items-center justify-between" style="margin-bottom: 6px;">
+              <h4>Average Pronunciation Accuracy</h4>
+              <span id="progress-avg-pron-val" class="font-mono font-bold text-primary" style="font-size: 1.3rem;">0%</span>
+            </div>
+            <div class="score-bar-bg">
+              <div id="progress-avg-pron-bar" class="score-bar-fill score-excellent" style="width: 0%;"></div>
+            </div>
+            <p class="text-xs text-muted" style="margin-top: 6px;">Computed across all your recorded attempts.</p>
+          </div>
+
+          <!-- Weekly Activity Chart (Pure SVG) -->
+          <div class="card">
+            <h4 data-i18n="chart_title" style="margin-bottom: 4px;">Weekly Activity Overview</h4>
+            <p class="text-xs text-muted" style="margin-bottom: var(--space-md);" data-i18n="chart_sub">Words practiced & quizzes taken over the last 7 days</p>
+            <div id="weekly-activity-chart-box">
+              <!-- Rendered by progressTracker.renderWeeklyActivityChart() -->
+            </div>
+          </div>
+
+          <!-- Badges & Achievements -->
+          <div class="card">
+            <h4 data-i18n="badges_title" style="margin-bottom: var(--space-md);">Earned Badges & Milestones</h4>
+            <div id="badges-grid" class="grid" style="grid-template-columns: repeat(2, 1fr); gap: var(--space-sm);">
+              <!-- Rendered by progressTracker.renderBadges() -->
+            </div>
+          </div>
+
+          <!-- Presentation & Reset Controls -->
+          <div class="card flex flex-col gap-sm">
+            <h5 class="text-xs font-semibold text-muted" style="text-transform: uppercase;">Judge & Demo Controls</h5>
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold">Unit Locks Override:</span>
+              <button id="skip-locks-toggle-btn" class="btn btn-sm btn-secondary" onclick="progressTracker.toggleSkipLocks()" data-i18n="btn_toggle_locks">
+                Skip Unit Locks (Demo)
+              </button>
+            </div>
+            <div class="flex items-center justify-between" style="margin-top: 8px;">
+              <span class="text-sm font-semibold text-danger">Reset All Local Data:</span>
+              <button class="btn btn-sm btn-danger" onclick="progressTracker.confirmResetProgress()" data-i18n="btn_reset_data">
+                Reset All Progress
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 5: AI BUDDY CHATBOT (#chat)
+         ========================================== -->
+    <section id="chat" class="view-section">
+      <div style="max-width: 680px; margin: 0 auto;">
+        <div style="margin-bottom: var(--space-md); text-align: center;">
+          <h2 data-i18n="chat_title">BhashaBuddy AI Assistant</h2>
+          <p class="text-muted" data-i18n="chat_subtitle">Ask technical concepts or interview questions in your language!</p>
+        </div>
+
+        <!-- Quick Reply Chips -->
+        <div class="flex gap-xs" style="overflow-x: auto; padding-bottom: 8px; margin-bottom: var(--space-sm);">
+          <button class="chat-chip" onclick="chatbot.sendQuickChip('algo')" data-i18n="chip_algo">What is an algorithm?</button>
+          <button class="chat-chip" onclick="chatbot.sendQuickChip('interview')" data-i18n="chip_interview">Interview self-introduction</button>
+          <button class="chat-chip" onclick="chatbot.sendQuickChip('compiler')" data-i18n="chip_compiler">Compiler vs Interpreter</button>
+          <button class="chat-chip" onclick="chatbot.sendQuickChip('tips')" data-i18n="chip_tips">Fluency tips</button>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="chat-window">
+          <div id="chat-messages-container" class="chat-messages">
+            <!-- Messages appended dynamically -->
+          </div>
+
+          <!-- Chat Input Bar -->
+          <div style="padding: 12px; background: var(--color-surface); border-top: 1px solid var(--color-border); display: flex; gap: 8px;">
+            <input type="text" id="chat-input-text" class="quiz-option-btn" style="flex: 1; min-height: 44px; padding: 8px 14px; font-size: 0.95rem;" placeholder="Ask a question (e.g., 'What is algorithm?')..." data-i18n-placeholder="chat_placeholder" onkeydown="if(event.key==='Enter') chatbot.sendMessage()">
+            <button class="btn btn-primary" onclick="chatbot.sendMessage()" data-i18n="chat_btn_send">
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 6: PICTORIAL DICTIONARY (#dictionary)
+         ========================================== -->
+    <section id="dictionary" class="view-section">
+      <div style="margin-bottom: var(--space-md);">
+        <h2 data-i18n="dict_title">Visual Pictorial Dictionary</h2>
+        <p class="text-muted" data-i18n="dict_subtitle">Explore all 50 engineering terms with schematic diagrams and audio.</p>
+      </div>
+
+      <!-- Search Input -->
+      <div style="margin-bottom: var(--space-md);">
+        <input type="text" id="dict-search-input" class="quiz-option-btn" style="width: 100%; min-height: 48px;" placeholder="Search in English, Telugu, Hindi, Tamil..." data-i18n-placeholder="dict_search_placeholder">
+      </div>
+
+      <!-- Unit Filter Chips -->
+      <div class="flex gap-xs" style="overflow-x: auto; padding-bottom: 8px; margin-bottom: var(--space-lg);">
+        <button class="btn btn-sm btn-primary dict-filter-chip" data-unit="all" onclick="dictionary.setUnitFilter('all')" data-i18n="dict_filter_all">All Units (50)</button>
+        <button class="btn btn-sm btn-secondary dict-filter-chip" data-unit="1" onclick="dictionary.setUnitFilter(1)">Unit 1</button>
+        <button class="btn btn-sm btn-secondary dict-filter-chip" data-unit="2" onclick="dictionary.setUnitFilter(2)">Unit 2</button>
+        <button class="btn btn-sm btn-secondary dict-filter-chip" data-unit="3" onclick="dictionary.setUnitFilter(3)">Unit 3</button>
+        <button class="btn btn-sm btn-secondary dict-filter-chip" data-unit="4" onclick="dictionary.setUnitFilter(4)">Unit 4</button>
+        <button class="btn btn-sm btn-secondary dict-filter-chip" data-unit="5" onclick="dictionary.setUnitFilter(5)">Unit 5</button>
+      </div>
+
+      <!-- Dictionary Grid Container -->
+      <div id="dict-grid-container" class="dictionary-grid">
+        <!-- Rendered by dictionary.render() -->
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 7: PEER CHALLENGE (#peer)
+         ========================================== -->
+    <section id="peer" class="view-section">
+      <div style="max-width: 640px; margin: 0 auto;">
+        <div style="margin-bottom: var(--space-lg); text-align: center;">
+          <h2 data-i18n="peer_title">Peer Pronunciation Challenge</h2>
+          <p class="text-muted" data-i18n="peer_subtitle">Listen to peer recordings from fellow engineering colleges and vote!</p>
+        </div>
+
+        <!-- Challenge of the Day Banner -->
+        <div class="card card-accent-border" style="margin-bottom: var(--space-lg); text-align: center;">
+          <span class="badge badge-accent" data-i18n="peer_word_of_day">Today's Peer Challenge Word:</span>
+          <h1 id="peer-target-word-display" style="font-size: 2.5rem; color: var(--color-primary); margin: 8px 0;">
+            Algorithm
+          </h1>
+          <p class="text-sm text-muted">Pronounce clearly into your microphone to submit your recording for today.</p>
+
+          <div style="margin-top: 16px;">
+            <button id="peer-record-btn" class="btn btn-primary" onclick="peerChallenge.toggleRecording()" data-i18n="btn_record_voice">
+              Record Your Voice (5s)
+            </button>
+          </div>
+        </div>
+
+        <!-- Student Recording Playback Box -->
+        <div id="peer-my-recording-box" style="display: none; margin-bottom: var(--space-lg);"></div>
+
+        <!-- Classmate Submissions List -->
+        <div>
+          <h4 data-i18n="peer_classmates_title" style="margin-bottom: var(--space-md);">
+            Classmate Submissions from Engineering Colleges
+          </h4>
+          <div id="peer-classmates-container">
+            <!-- Rendered by peerChallenge.renderClassmatesList() -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================
+       MODALS
+       ========================================== -->
+
+  <!-- 1. First Visit Onboarding Modal -->
+  <div id="onboarding-modal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 data-i18n="onboarding_title">Welcome to BhashaBuddy!</h3>
+      </div>
+      <div class="modal-body">
+        <p class="text-sm text-muted" style="margin-bottom: var(--space-md);" data-i18n="onboarding_subtitle">
+          Bridge the gap between your mother tongue and engineering English.
+        </p>
+
+        <div style="margin-bottom: var(--space-md);">
+          <label class="text-xs font-semibold text-muted" style="text-transform: uppercase;" data-i18n="label_your_name">What is your name?</label>
+          <input type="text" id="onboarding-name-input" class="quiz-option-btn" style="width: 100%; margin-top: 4px;" placeholder="e.g., Ravi Kumar" data-i18n-placeholder="placeholder_name">
+        </div>
+
+        <div style="margin-bottom: var(--space-md);">
+          <label class="text-xs font-semibold text-muted" style="text-transform: uppercase;" data-i18n="label_choose_lang">Preferred Regional Language:</label>
+          <select id="onboarding-lang-select" class="quiz-option-btn" style="width: 100%; margin-top: 4px;">
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: var(--space-lg);">
+          <label class="text-xs font-semibold text-muted" style="text-transform: uppercase;" data-i18n="label_daily_goal">Select Your Daily Goal:</label>
+          <select id="onboarding-goal-select" class="quiz-option-btn" style="width: 100%; margin-top: 4px;">
+            <option value="3" data-i18n="goal_easy">3 Words (Easy - 5 mins)</option>
+            <option value="5" selected data-i18n="goal_medium">5 Words (Recommended - 10 mins)</option>
+            <option value="10" data-i18n="goal_hard">10 Words (Intensive - 20 mins)</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-sm">
+          <button class="btn btn-primary btn-lg" onclick="app.submitOnboarding()" data-i18n="btn_get_started">
+            Start My Learning Journey 🚀
+          </button>
+          <button class="btn btn-accent btn-sm" onclick="app.enableQuickDemoMode()" data-i18n="btn_quick_demo">
+            ⚡ Quick Demo Mode (Preloaded for Judges)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Micro Lesson Modal -->
+  <div id="micro-lesson-modal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 data-i18n="micro_lesson_title">2-Minute Micro Lesson</h3>
+        <button class="btn-icon" onclick="app.closeMicroLesson()" aria-label="Close">✕</button>
+      </div>
+      <div id="micro-lesson-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 3. Dictionary Detail Modal -->
+  <div id="dict-detail-modal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="dict-modal-title">Term Details</h3>
+        <button class="btn-icon" onclick="dictionary.closeModal()" aria-label="Close">✕</button>
+      </div>
+      <div id="dict-modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 4. Reset Confirmation Modal -->
+  <div id="reset-confirm-modal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 data-i18n="modal_reset_title">Reset All Progress?</h3>
+        <button class="btn-icon" onclick="progressTracker.closeResetModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="regional-text text-sm" data-i18n="modal_reset_body">
+          This will wipe all your mastered words, streaks, and quiz logs. Are you sure you want to start fresh?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="progressTracker.closeResetModal()" data-i18n="btn_cancel">Cancel</button>
+        <button class="btn btn-danger" onclick="progressTracker.executeReset()" data-i18n="btn_confirm_reset">Yes, Reset Everything</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       FIXED BOTTOM NAVIGATION (Mobile & Tablet)
+       ========================================== -->
+  <nav class="bottom-nav" aria-label="Mobile Navigation">
+    <a href="#home" class="bottom-nav-item active">
+      <svg viewBox="0 0 24 24" fill="none"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span data-i18n="nav_home">Home</span>
+    </a>
+    <a href="#learn" class="bottom-nav-item">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span data-i18n="nav_learn">Learn</span>
+    </a>
+    <a href="#practice" class="bottom-nav-item">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+      <span data-i18n="nav_practice">Practice</span>
+    </a>
+    <a href="#quiz" class="bottom-nav-item">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span data-i18n="nav_quiz">Quiz</span>
+    </a>
+    <a href="#progress" class="bottom-nav-item">
+      <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span data-i18n="nav_progress">Progress</span>
+    </a>
+    <a href="#dictionary" class="bottom-nav-item">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span data-i18n="nav_dictionary">Dict</span>
+    </a>
+  </nav>
+
+  <!-- ==========================================
+       SCRIPTS (Vanilla ES6+ Only - Zero external libs)
+       ========================================== -->
+  <script src="./js/data.js"></script>
+  <script src="./js/i18n.js"></script>
+  <script src="./js/storage.js"></script>
+  <script src="./js/speech.js"></script>
+  <script src="./js/levenshtein.js"></script>
+  <script src="./js/flashcards.js"></script>
+  <script src="./js/pronunciation.js"></script>
+  <script src="./js/quiz.js"></script>
+  <script src="./js/progress.js"></script>
+  <script src="./js/chatbot.js"></script>
+  <script src="./js/dictionary.js"></script>
+  <script src="./js/peer.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>

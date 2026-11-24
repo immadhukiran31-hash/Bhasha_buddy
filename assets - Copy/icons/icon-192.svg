@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="42" fill="url(#grad)"/>
+  <!-- Speech Bubble + Voice Wave + Book Symbol -->
+  <path d="M48 56 h96 a16 16 0 0 1 16 16 v48 a16 16 0 0 1 -16 16 h-40 l-24 20 v-20 h-32 a16 16 0 0 1 -16 -16 v-48 a16 16 0 0 1 16 -16 z" fill="#FFFFFF" fill-opacity="0.95"/>
+  <circle cx="76" cy="96" r="8" fill="#0F766E"/>
+  <circle cx="96" cy="96" r="8" fill="#F59E0B"/>
+  <circle cx="116" cy="96" r="8" fill="#0F766E"/>
+</svg>
